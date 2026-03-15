@@ -1,0 +1,325 @@
+{
+  "name": "amendment_corrections_upload",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ab932dcc-9b0e-44b5-8ee6-73ff7df862d3",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/users/shobhnagupta/n8n/amendments/correction_slip.pdf ",
+        "options": {
+          "dataPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "8af78d26-e7e2-4379-9a8c-157f614649e2",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {
+          "joinPages": true
+        }
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "5254b840-b5d6-4524-ba19-f128c313c3d2",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $input.first().json.text.toUpperCase();\n\nlet manual = \"UNKNOWN\";\n\n// Detect manual\nif (text.includes(\"IRPWM\") || text.includes(\"PERMANENT WAY\")) {\n  manual = \"IRPWM\";\n}\nelse if (text.includes(\"IRSEM\") || text.includes(\"SIGNAL ENGINEERING\")) {\n  manual = \"IRSEM\";\n}\nelse if (text.includes(\"GSR\") || text.includes(\"GENERAL AND SUBSIDIARY\")) {\n  manual = \"GSR\";\n}\n\n// Find all clause numbers\nconst clauseMatches = [...text.matchAll(/CLAUSE\\s+(\\d+(\\.\\d+)?)/g)];\n\nlet clauses = clauseMatches.map(m => m[1]);\n\n// Extract revised section\nlet revisedMatch = text.split(\"FOLLOWING:\");\nlet revisedText = revisedMatch.length > 1 ? revisedMatch[1].trim() : text;\n\n// If no clause found return empty\nif (clauses.length === 0) {\n  return [];\n}\n\n// Build output for each clause\nreturn clauses.map(clause => {\n\n  let chapter = clause.includes(\".\") ? clause.split(\".\")[0] : clause;\n\n  return {\n    json: {\n      manual,\n      chapter,\n      clause,\n      reference: ${manual}-${chapter}-${clause},\n      text: ${clause} ${revisedText}\n    }\n  };\n\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "cb845d76-ca1e-497b-983f-e6ae1fe9473a",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "resource": "point",
+        "operation": "scrollPoints",
+        "collectionName": {
+          "__rl": true,
+          "value": "RAG_Manuals",
+          "mode": "list",
+          "cachedResultName": "RAG_Manuals"
+        },
+        "limit": 1,
+        "filter": "={\n  \"must\": [\n    {\n      \"key\": \"reference\",\n      \"match\": {\n        \"value\": \"={{$json.reference}}\"\n      }\n    }\n  ]\n}",
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-qdrant.qdrant",
+      "typeVersion": 1,
+      "position": [
+        896,
+        0
+      ],
+      "id": "7fe1a095-5416-4558-a6c4-cb9720663293",
+      "name": "Scroll Points",
+      "credentials": {
+        "qdrantRestApi": {
+          "id": "9PUSZT5qgdn2R2zR",
+          "name": "Qdrant account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "payload",
+        "operation": "setPayload",
+        "collectionName": {
+          "__rl": true,
+          "value": "RAG_Manuals",
+          "mode": "list",
+          "cachedResultName": "RAG_Manuals"
+        },
+        "payload": "{\n \"status\": \"inactive\"\n}",
+        "points": "={{ $json.id }}",
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-qdrant.qdrant",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "30cf39e2-45a2-461d-bdc2-eda523a15623",
+      "name": "Set Payload",
+      "credentials": {
+        "qdrantRestApi": {
+          "id": "9PUSZT5qgdn2R2zR",
+          "name": "Qdrant account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "RAG_Manuals",
+          "mode": "list",
+          "cachedResultName": "RAG_Manuals"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        1552,
+        0
+      ],
+      "id": "5fb45c41-2df2-4a36-95af-958d17c5c169",
+      "name": "Qdrant Vector Store",
+      "credentials": {
+        "qdrantApi": {
+          "id": "nwkxu9or9TlpNfa7",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "manual",
+                "value": "={{ $json.manual}} "
+              },
+              {
+                "name": "chapter",
+                "value": "={{ $json.chapter }}"
+              },
+              {
+                "name": "clause",
+                "value": "={{ $json.clause }}"
+              },
+              {
+                "name": "reference",
+                "value": "={{ $json.reference }}"
+              },
+              {
+                "name": "status",
+                "value": "active"
+              },
+              {
+                "name": "amendment_number",
+                "value": "CS-01"
+              },
+              {
+                "name": "effective_date",
+                "value": "2026-03-15"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1416,
+        224
+      ],
+      "id": "c1421e0e-af45-40ae-b28c-1ca7b939e3fa",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9e357498-959e-47d1-8fbd-45f02f249f50",
+              "name": "amendment_number",
+              "value": "CS-01",
+              "type": "string"
+            },
+            {
+              "id": "f05d6a47-3700-428f-a419-301d59e5a46e",
+              "name": "effective_date",
+              "value": "2026-03-15",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1328,
+        0
+      ],
+      "id": "3f131756-759b-4637-bc6c-3ae279ba8537",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Scroll Points",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scroll Points": {
+      "main": [
+        [
+          {
+            "node": "Set Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Payload": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "05e92cdf-1cf0-453e-a0c1-5a5411fbf6ae",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "acb77edea9f86da0a9984cefb29a9794948c1ac9d9cab4b222006613a13e67f1"
+  },
+  "id": "fjzOMLkfD6P6A7p8",
+  "tags": []
+}
