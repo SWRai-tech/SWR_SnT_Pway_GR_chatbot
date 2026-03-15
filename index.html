@@ -1,0 +1,67 @@
+<!DOCTYPE html><html>
+<head>
+<title>Railway Manuals AI Assistant</title><style>
+body{
+font-family: Arial;
+background:#f2f2f2;
+}
+
+#chatbox{
+width:500px;
+margin:40px auto;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px #ccc;
+}
+
+#messages{
+height:300px;
+overflow-y:auto;
+border:1px solid #ddd;
+padding:10px;
+margin-bottom:10px;
+}
+
+input{
+width:75%;
+padding:10px;
+}
+
+button{
+padding:10px 15px;
+}
+
+.user{
+color:blue;
+}
+
+.ai{
+color:green;
+}
+</style></head><body><div id="chatbox"><h2>Railway Manuals AI</h2><div id="messages"></div><input id="question" placeholder="Ask about railway manuals"/>
+<button onclick="sendQuestion()">Send</button></div><script>
+
+async function sendQuestion(){
+
+let q=document.getElementById("question").value;
+
+document.getElementById("messages").innerHTML +=
+"<p class='user'><b>You:</b> "+q+"</p>";
+
+const response = await fetch("YOUR_WEBHOOK_URL",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({question:q})
+});
+
+const data = await response.json();
+
+document.getElementById("messages").innerHTML +=
+"<p class='ai'><b>AI:</b> "+data.answer+"</p>";
+
+document.getElementById("question").value="";
+}
+
+</script></body>
+</html>
