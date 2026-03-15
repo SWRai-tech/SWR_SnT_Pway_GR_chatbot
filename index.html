@@ -49,7 +49,7 @@ let q=document.getElementById("question").value;
 document.getElementById("messages").innerHTML +=
 "<p class='user'><b>You:</b> "+q+"</p>";
 
-const response = await fetch("YOUR_WEBHOOK_URL",{
+const response = await fetch("http://localhost:5678/webhook/6867456f-bf84-45b3-8ec5-3ef6f1af4af8",{
 method:"POST",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify({question:q})
