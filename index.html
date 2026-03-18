@@ -1,11 +1,14 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html>
+<html>
 <head>
 <title>GRnSR / IRSEM / IRPWM Chatbot</title>
 <style>
 body{
 font-family: Arial;
 background:#f2f2f2;
-}#chatbox{
+}
+
+#chatbox{
 width:500px;
 margin:40px auto;
 background:white;
@@ -31,30 +34,28 @@ button{
 padding:10px 15px;
 }
 
-.user{
-color:blue;
-}
-
-.ai{
-color:green;
-white-space: pre-line;
-}
+.user{color:blue;}
+.ai{color:green; white-space: pre-line;}
 </style>
+</head>
 
-</head><body><div id="chatbox">
-<h2 style="text-align:center;">Ask GRnSR / IRSEM / IRPWM</h2><div id="messages"></div><input id="question" placeholder="Ask railway manuals..."/>
+<body>
+
+<div id="chatbox">
+<h2 style="text-align:center;">GRnSR / IRSEM / IRPWM</h2>
+
+<div id="messages"></div>
+
+<input id="question" placeholder="Ask about railway manuals"/>
 <button onclick="sendQuestion()">Send</button>
-</div><script>
 
-// Create session ID
+</div>
+
+<script>
+
 if(!localStorage.getItem("sessionId")){
   localStorage.setItem("sessionId", "user-" + Math.random().toString(36).substring(2));
 }
-
-// Enter key support
-document.getElementById("question").addEventListener("keypress", function(e) {
-  if (e.key === "Enter") sendQuestion();
-});
 
 async function sendQuestion(){
 
@@ -64,10 +65,7 @@ if(!q) return;
 let messages = document.getElementById("messages");
 
 messages.innerHTML += <p class='user'><b>You:</b> ${q}</p>;
-
-if(!document.getElementById("loading")){
-  messages.innerHTML += <p id="loading">AI is typing...</p>;
-}
+messages.innerHTML += <p id="loading">AI is typing...</p>;
 
 try {
 
@@ -84,25 +82,24 @@ body: JSON.stringify({
 
 const data = await response.json();
 
-document.getElementById("loading")?.remove();
+document.getElementById("loading").remove();
 
-messages.innerHTML += `
-<p class='ai'>
-<b>AI:</b><br>${data.answer}
-</p>
-`;
+messages.innerHTML += <p class='ai'><b>AI:</b><br>${data.answer}</p>;
 
 messages.scrollTop = messages.scrollHeight;
 
 } catch (error) {
 
-document.getElementById("loading")?.remove();
-messages.innerHTML += <p style="color:red;">⚠️ Server not reachable</p>;
+document.getElementById("loading").remove();
+messages.innerHTML += <p style="color:red;">Error connecting</p>;
 
 }
 
 document.getElementById("question").value="";
 }
 
-</script></body>
+</script>
+
+</body>
 </html>
+
