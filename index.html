@@ -1,12 +1,11 @@
 <!DOCTYPE html><html>
 <head>
-<title>Ask from GR IRSEM IRPWM</title><style>
+<title>GRnSR / IRSEM / IRPWM Chatbot</title>
+<style>
 body{
 font-family: Arial;
 background:#f2f2f2;
-}
-
-#chatbox{
+}#chatbox{
 width:500px;
 margin:40px auto;
 background:white;
@@ -16,7 +15,7 @@ box-shadow:0 0 10px #ccc;
 }
 
 #messages{
-height:300px;
+height:350px;
 overflow-y:auto;
 border:1px solid #ddd;
 padding:10px;
@@ -38,27 +37,69 @@ color:blue;
 
 .ai{
 color:green;
+white-space: pre-line;
 }
-</style></head><body><div id="chatbox"><h2 style="text-align:center:">Ask from GR IRSEM IRPWM<h2><div id="messages"></div><input id="question" placeholder="Ask about railway manuals"/>
-<button onclick="sendQuestion()">Send</button></div><script>
+</style>
+
+</head><body><div id="chatbox">
+<h2 style="text-align:center;">Ask GRnSR / IRSEM / IRPWM</h2><div id="messages"></div><input id="question" placeholder="Ask railway manuals..."/>
+<button onclick="sendQuestion()">Send</button>
+</div><script>
+
+// Create session ID
+if(!localStorage.getItem("sessionId")){
+  localStorage.setItem("sessionId", "user-" + Math.random().toString(36).substring(2));
+}
+
+// Enter key support
+document.getElementById("question").addEventListener("keypress", function(e) {
+  if (e.key === "Enter") sendQuestion();
+});
 
 async function sendQuestion(){
 
-let q=document.getElementById("question").value;
+let q = document.getElementById("question").value;
+if(!q) return;
 
-document.getElementById("messages").innerHTML +=
-"<p class='user'><b>You:</b> "+q+"</p>";
+let messages = document.getElementById("messages");
 
-const response = await fetch("https://n8n.a2zenith.app/webhook/6867456f-bf84-45b3-8ec5-3ef6f1af4af8",{
+messages.innerHTML += <p class='user'><b>You:</b> ${q}</p>;
+
+if(!document.getElementById("loading")){
+  messages.innerHTML += <p id="loading">AI is typing...</p>;
+}
+
+try {
+
+const response = await fetch(
+"https://n8n.a2zenith.app/webhook/Rag_User-Query",
+{
 method:"POST",
 headers:{"Content-Type":"application/json"},
-body:JSON.stringify({question:q})
+body: JSON.stringify({
+  query: q,
+  sessionId: localStorage.getItem("sessionId")
+})
 });
 
 const data = await response.json();
 
-document.getElementById("messages").innerHTML +=
-"<p class='ai'><b>AI:</b> "+data.answer+"</p>";
+document.getElementById("loading")?.remove();
+
+messages.innerHTML += `
+<p class='ai'>
+<b>AI:</b><br>${data.answer}
+</p>
+`;
+
+messages.scrollTop = messages.scrollHeight;
+
+} catch (error) {
+
+document.getElementById("loading")?.remove();
+messages.innerHTML += <p style="color:red;">⚠️ Server not reachable</p>;
+
+}
 
 document.getElementById("question").value="";
 }
