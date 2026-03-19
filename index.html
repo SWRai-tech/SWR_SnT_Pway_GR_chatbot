@@ -45,8 +45,10 @@ button {
 
 <div id="messages"></div>
 
+<form id="chat-form" method="post" action="javascript:void(0);">
 <input type="text" id="question" placeholder="Type your question">
-<button onclick="sendQuestion()">Send</button>
+<button type="submit">Send</button>
+</form>
 </div>
 
 <script>
@@ -55,7 +57,11 @@ if (!localStorage.getItem("sessionId")) {
     localStorage.setItem("sessionId", "user-" + Math.random().toString(36).substring(2));
 }
 
-async function sendQuestion() {
+document.getElementById("chat-form").addEventListener("submit", sendQuestion);
+
+async function sendQuestion(event) {
+
+    if (event) event.preventDefault();
 
     let q = document.getElementById("question").value.trim();
     if (!q) return;
