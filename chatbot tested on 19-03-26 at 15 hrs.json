@@ -1,0 +1,9 @@
+{
+  "name": "chatbot tested on 19/03/26 at 15 hrs",
+  "tested_at_local": "2026-03-19 15:00",
+  "tested_at_utc": "2026-03-19T09:30:00Z",
+  "status": "working",
+  "frontend_url": "https://swrai-tech.github.io/SWR_SnT_Pway_GR_chatbot/",
+  "webhook_url": "https://n8n.a2zenith.app/webhook/RAG_User_Query",
+  "notes": "End-to-end chatbot test passed."
+}
