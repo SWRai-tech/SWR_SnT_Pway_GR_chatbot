@@ -420,7 +420,8 @@
   </main>
 
   <script>
-    const webhookUrl = "https://api.vistarz.in/webhook/RAG_User_Query";
+   // const webhookUrl = "https://api.vistarz.in/webhook/RAG_User_Query";
+	const webhookUrl = " https://chat.vistarz.in/api/v1/chatquery";  
     const form = document.getElementById("chat-form");
     const textarea = document.getElementById("question");
     const messages = document.getElementById("messages");
@@ -502,7 +503,8 @@
         const response = await fetch(webhookUrl, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json" ,
+			 "Authorization" : "Bearer 5ad1359d74dca9b099160c8b406e7f16cf608a847935674a8dacab7f1e66e8b1"  
           },
           body: JSON.stringify({
             query: question,
