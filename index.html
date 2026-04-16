@@ -8,7 +8,7 @@
     name="description"
     content="Ask questions against the GR, IRSEM, and IRPWM railway manuals."
   >
-  <style>
+   <style>
     :root {
       color-scheme: light;
       --bg: #f4efe7;
@@ -21,13 +21,11 @@
       --accent-soft: #d9efe8;
       --danger: #a43131;
       --danger-soft: #f9e0dd;
-      --shadow: 0 14px 36px rgba(50, 40, 20, 0.10);
+      --shadow: 0 20px 60px rgba(50, 40, 20, 0.12);
     }
-
     * {
       box-sizing: border-box;
     }
-
     body {
       margin: 0;
       min-height: 100vh;
@@ -38,56 +36,109 @@
         radial-gradient(circle at top right, rgba(166, 123, 54, 0.16), transparent 25%),
         linear-gradient(180deg, #f9f6ef 0%, var(--bg) 52%, #efe6d7 100%);
     }
-
     .shell {
-      width: min(880px, calc(100% - 24px));
-      margin: 20px auto;
+      width: min(960px, calc(100% - 32px));
+      margin: 32px auto;
       display: grid;
-      gap: 12px;
+      gap: 16px;
     }
-
     .hero,
     .chat {
       background: var(--panel);
       border: 1px solid rgba(216, 200, 180, 0.85);
-      border-radius: 18px;
+      border-radius: 24px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
     }
-
     .hero {
-      padding: 20px;
+      padding: 28px;
     }
-
     .eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 6px 10px;
+      padding: 8px 12px;
       border-radius: 999px;
       background: var(--accent-soft);
       color: var(--accent);
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
-
     h1 {
-      margin: 12px 0 8px;
-      font-size: clamp(24px, 3.2vw, 38px);
-      line-height: 1.1;
+      margin: 16px 0 12px;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.05;
     }
-
     .hero p {
       margin: 0;
-      max-width: 700px;
+      max-width: 760px;
       color: var(--muted);
-      font-size: 15px;
-      line-height: 1.55;
+      font-size: 17px;
+      line-height: 1.7;
     }
-
-    .credit {
+    button:hover,
+    button:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+      box-shadow: 0 8px 20px rgba(14, 90, 79, 0.12);
+    }
+    .chat {
+      padding: 20px;
+    }
+    .chat-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .chat-top h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      background: #eef3f2;
+      color: var(--muted);
+      border: 1px solid #d8e2df;
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #b5801f;
+    }
+    .status.ready .status-dot {
+      background: #1b8a5a;
+    }
+    .status.error {
+      background: var(--danger-soft);
+      color: var(--danger);
+      border-color: #efb4ae;
+    }
+    .status.error .status-dot {
+      background: var(--danger);
+    }
+    .messages {
+      min-height: 360px;
+      max-height: 60vh;
+      overflow-y: auto;
+      padding: 6px 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scroll-behavior: smooth;
+    }
+		
+		 .credit {
       color: var(--muted);
       font-weight: 600;
 			text-align: center;
@@ -105,92 +156,27 @@
 			font-style: italic;
     }
 
-    .chat {
-      padding: 16px;
-    }
-
-    .chat-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
-    .chat-top h2 {
-      margin: 0;
-      font-size: 18px;
-    }
-
-    .status {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      background: #eef3f2;
-      color: var(--muted);
-      border: 1px solid #d8e2df;
-    }
-
-    .status-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #b5801f;
-    }
-
-    .status.ready .status-dot {
-      background: #1b8a5a;
-    }
-
-    .status.error {
-      background: var(--danger-soft);
-      color: var(--danger);
-      border-color: #efb4ae;
-    }
-
-    .status.error .status-dot {
-      background: var(--danger);
-    }
-
-    .messages {
-      min-height: 280px;
-      max-height: 56vh;
-      overflow-y: auto;
-      padding: 4px 2px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      scroll-behavior: smooth;
-    }
 
     .bubble {
-      max-width: min(720px, 94%);
-      padding: 11px 13px;
-      border-radius: 14px;
-      line-height: 1.5;
+      max-width: min(760px, 92%);
+      padding: 14px 16px;
+      border-radius: 18px;
+      line-height: 1.65;
       white-space: pre-wrap;
       word-break: break-word;
-      font-size: 14px;
     }
-
     .bubble.user {
       align-self: flex-end;
       background: #123b4c;
       color: #fff;
-      border-bottom-right-radius: 5px;
+      border-bottom-right-radius: 6px;
     }
-
     .bubble.bot {
       align-self: flex-start;
       background: #fff;
       border: 1px solid #eadfce;
-      border-bottom-left-radius: 5px;
+      border-bottom-left-radius: 6px;
     }
-
     .bubble.system {
       align-self: center;
       width: 100%;
@@ -200,9 +186,8 @@
       color: #6b5a2f;
       text-align: center;
     }
-
-
-    .loading-wrap {
+		
+		.loading-wrap {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -236,142 +221,197 @@
     .loading-dots span:nth-child(3) {
       animation-delay: 0.3s;
     }
-
-    @keyframes pulseDot {
-      0%,
-      80%,
-      100% {
-        transform: scale(0.85);
-        opacity: 0.35;
-      }
-      40% {
-        transform: scale(1.15);
-        opacity: 1;
-      }
-    }
-
+		
     .meta {
       display: block;
-      margin-bottom: 4px;
-      font-size: 11px;
+      margin-bottom: 6px;
+      font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.03em;
       text-transform: uppercase;
       opacity: 0.75;
     }
-
     form {
-      margin-top: 12px;
+      margin-top: 18px;
       display: grid;
-      gap: 10px;
+      gap: 12px;
     }
-
     textarea {
       width: 100%;
-      min-height: 88px;
+      min-height: 110px;
       resize: vertical;
-      border-radius: 14px;
+      border-radius: 18px;
       border: 1px solid var(--line);
-      padding: 12px 14px;
+      padding: 16px;
       font: inherit;
       color: var(--text);
       background: var(--panel-strong);
       outline: none;
     }
-
     textarea:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 4px rgba(14, 90, 79, 0.12);
     }
-
     .actions {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
       flex-wrap: wrap;
     }
-
     .hint {
       color: var(--muted);
-      font-size: 12px;
+      font-size: 13px;
     }
-
     .buttons {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
     }
-
     button {
       border: 1px solid transparent;
       border-radius: 999px;
-      padding: 10px 14px;
+      padding: 12px 18px;
       font: inherit;
       cursor: pointer;
       transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
     }
-
-    button:hover,
-    button:focus-visible {
-      transform: translateY(-1px);
-      border-color: var(--accent);
-      box-shadow: 0 8px 20px rgba(14, 90, 79, 0.12);
-    }
-
     .primary {
       background: var(--accent);
       color: #fff;
     }
-
     .secondary {
       background: var(--panel-strong);
       color: var(--text);
       border-color: var(--line);
     }
-
     button:disabled {
       cursor: wait;
       opacity: 0.7;
       transform: none;
       box-shadow: none;
     }
-
     @media (max-width: 640px) {
       .shell {
-        width: min(100% - 12px, 880px);
-        margin: 12px auto;
+        width: min(100% - 16px, 960px);
+        margin: 16px auto;
       }
-
       .hero,
       .chat {
-        border-radius: 16px;
-        padding: 14px;
+        border-radius: 20px;
+        padding: 18px;
       }
-
       .messages {
-        min-height: 240px;
+        min-height: 300px;
       }
-
       .bubble {
         max-width: 100%;
       }
-
       .actions {
         align-items: stretch;
       }
-
       .buttons,
       .primary,
       .secondary {
         width: 100%;
       }
-
       button {
-        justify-content: center;
+					display: inline-flex;
+					justify-content: center;
+					align-items: center;
       }
     }
-  </style>
+		.modal[hidden] {
+  display: none;
+}
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px 12px;
+}
+.modal.open {
+  display: flex;
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 24, 32, 0.55);
+  backdrop-filter: blur(3px);
+}
+.modal-card {
+  position: relative;
+  z-index: 10000;
+  width: min(920px, 100%);
+  max-height: 85vh;
+  overflow: hidden;
+  margin-top: 24px;
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
+}
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+.matches-list {
+  padding: 16px;
+  overflow-y: auto;
+  display: grid;
+  gap: 14px;
+}
+.match-card {
+  background: #fff;
+  border: 1px solid #eadfce;
+  border-radius: 16px;
+  padding: 16px;
+}
+.match-title {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+.match-meta,
+.match-score {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.match-text {
+  margin: 0;
+  padding: 12px 14px;
+  background: #f8f5ef;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+@keyframes pulseDot {
+  0%, 80%, 100% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+</style>
 </head>
 <body>
   <main class="shell">
@@ -381,11 +421,7 @@
       <p>
         Ask about GR, IRSEM, and IRPWM provisions in plain language. 
       </p>
-
-     
-      
     </section>
-
     <section class="chat">
       <div class="chat-top">
         <h2>Chat</h2>
@@ -394,9 +430,7 @@
           <span id="status-text">Ready</span>
         </div>
       </div>
-
       <div id="messages" class="messages" aria-live="polite" aria-label="Chat transcript"></div>
-
       <form id="chat-form" novalidate>
         <label for="question" class="hint">Question</label>
         <textarea
@@ -410,18 +444,32 @@
           <div class="buttons">
             <button id="clear-chat" class="secondary" type="button">Clear chat</button>
             <button id="send-button" class="primary" type="submit">Send</button>
+						<button id="show-matches" class="secondary" type="button" disabled>Show Reference</button>																																											
           </div>
         </div>
       </form>
     </section>
 		 <div class="credit">Designed and Developed by S&amp;T SWR</div>
 		<div class="disclaimer">Disclaimer: This chatbot is provided solely as a demonstration of available AI technical capabilities. Responses have not been independently validated.</div>
-		
   </main>
-
+<div id="matches-modal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div
+    class="modal-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="matches-title"
+  >
+    <div class="modal-header">
+      <h3 id="matches-title">Retrieved clause matches</h3>
+      <button id="close-matches" class="secondary" type="button">Close</button>
+    </div>
+    <div id="matches-list" class="matches-list"></div>
+  </div>
+</div>															 
   <script>
    // const webhookUrl = "https://api.vistarz.in/webhook/RAG_User_Query";
-	const webhookUrl = " https://chat.vistarz.in/api/v1/chatquery";  
+	const webhookUrl = "https://chat.vistarz.in/api/v1/chatquery";  
     const form = document.getElementById("chat-form");
     const textarea = document.getElementById("question");
     const messages = document.getElementById("messages");
@@ -429,15 +477,20 @@
     const statusText = document.getElementById("status-text");
     const sendButton = document.getElementById("send-button");
     const clearButton = document.getElementById("clear-chat");
-
-
+	
+		const showMatchesButton = document.getElementById("show-matches");
+const matchesModal = document.getElementById("matches-modal");
+const matchesList = document.getElementById("matches-list");
+const closeMatchesButton = document.getElementById("close-matches");
+let lastMatches = [];
+    const initialMessage =
+      "Ask a question to start.";
     if (!localStorage.getItem("vistarzChatSessionId")) {
       localStorage.setItem(
         "vistarzChatSessionId",
         "chat-" + Math.random().toString(36).slice(2) + "-" + Date.now()
       );
     }
-
     function setStatus(label, type) {
       statusText.textContent = label;
       statusBox.className = "status";
@@ -445,30 +498,102 @@
         statusBox.classList.add(type);
       }
     }
-
+	function escapeHtml(str) {
+			return str
+				.replace(/&/g, "&amp;")
+				.replace(/</g, "&lt;")
+				.replace(/>/g, "&gt;")
+				.replace(/"/g, "&quot;")
+				.replace(/'/g, "&#39;");
+		}
+		function formatAnswer(text) {
+			return escapeHtml(text)
+				.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+		}
     function addBubble(role, label, text) {
       const bubble = document.createElement("article");
       bubble.className = "bubble " + role;
-
       const meta = document.createElement("span");
       meta.className = "meta";
       meta.textContent = label;
-
       const content = document.createElement("div");
-      content.textContent = text;
-
+     // content.textContent = text;
+				content.innerHTML = formatAnswer(text);
       bubble.appendChild(meta);
       bubble.appendChild(content);
       messages.appendChild(bubble);
       messages.scrollTop = messages.scrollHeight;
     }
-
-    function resetChat() {
-      messages.innerHTML = "";
-      setStatus("Ready", "ready");
-      textarea.focus();
-    }
-
+		function formatMatchTitle(item) {
+  const parts = [];
+  if (item.manual_name) {
+    parts.push(item.manual_name);
+  }
+  if (item.chapter_number) {
+    parts.push("Chapter " + item.chapter_number);
+  }
+  if (item.clause_number) {
+    parts.push("Clause/Rule " + item.clause_number);
+  }
+  return parts.join(" - ") || "Manual reference";
+}
+function renderMatches(results) {
+  matchesList.innerHTML = "";
+  if (!Array.isArray(results) || results.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "match-meta";
+    empty.textContent = "No retrieved clause matches are available for this answer.";
+    matchesList.appendChild(empty);
+    return;
+  }
+  results.forEach(function (item, index) {
+    const card = document.createElement("article");
+    card.className = "match-card";
+    const title = document.createElement("h4");
+    title.className = "match-title";
+    title.textContent = "#" + (item.rank || index + 1) + "  " + formatMatchTitle(item);
+    const meta = document.createElement("p");
+    meta.className = "match-meta";
+    meta.textContent =
+      item.clause_heading ||
+      item.chapter_label ||
+      "Retrieved manual paragraph";
+    const score = document.createElement("p");
+    score.className = "match-score";
+    score.textContent =
+      typeof item.score === "number"
+        ? "Match score: " + item.score.toFixed(3)
+        : "Match score: N/A";
+    const text = document.createElement("pre");
+    text.className = "match-text";
+    text.textContent = item.text || "";
+    card.appendChild(title);
+    card.appendChild(meta);
+    card.appendChild(score);
+    card.appendChild(text);
+    matchesList.appendChild(card);
+  });
+}
+function openMatchesModal() {
+ renderMatches(lastMatches);
+  matchesModal.hidden = false;
+  matchesModal.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeMatchesModal() {
+ matchesModal.classList.remove("open");
+  matchesModal.hidden = true;
+  document.body.style.overflow = "";
+}
+ function resetChat() {
+  messages.innerHTML = "";
+  lastMatches = [];
+  showMatchesButton.disabled = true;
+  showMatchesButton.textContent = "Show References";
+  addBubble("system", "System", initialMessage);
+  setStatus("Ready", "ready");
+  textarea.focus();
+}
     async function sendQuestion() {
       const question = textarea.value.trim();
       if (!question) {
@@ -476,13 +601,11 @@
         textarea.focus();
         return;
       }
-
       addBubble("user", "You", question);
       textarea.value = "";
       textarea.focus();
       sendButton.disabled = true;
       setStatus("Waiting for answer", null);
-
       const loadingBubble = document.createElement("article");
       loadingBubble.className = "bubble system";
       loadingBubble.id = "loading";
@@ -495,10 +618,8 @@
         </div>`;
       messages.appendChild(loadingBubble);
       messages.scrollTop = messages.scrollHeight;
-
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 45000);
-
       try {
         const response = await fetch(webhookUrl, {
           method: "POST",
@@ -512,20 +633,21 @@
           }),
           signal: controller.signal
         });
-
         clearTimeout(timeoutId);
         loadingBubble.remove();
-
         if (!response.ok) {
           throw new Error("HTTP " + response.status);
         }
-
         const data = await response.json();
+							lastMatches = Array.isArray(data.results) ? data.results : [];
+showMatchesButton.disabled = lastMatches.length === 0;
+showMatchesButton.textContent = lastMatches.length
+  ? "Show matches (" + lastMatches.length + ")"
+  : "Show matches";																													
         const answer =
           typeof data.answer === "string" && data.answer.trim()
             ? data.answer.trim()
             : "No answer was returned by the webhook.";
-
         addBubble("bot", "Assistant", answer);
         setStatus("Answer received", "ready");
       } catch (error) {
@@ -534,30 +656,44 @@
         const message =
           error.name === "AbortError"
             ? "The request timed out after 45 seconds. Please try again."
-            : "The assistant could not reach the API. Please retry in a moment.";
+            : "The assistant could not reach the Manuals. Please retry in a moment.";
         addBubble("system", "Connection", message);
         setStatus("Request failed", "error");
       } finally {
         sendButton.disabled = false;
       }
     }
-
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       sendQuestion();
     });
-
     textarea.addEventListener("keydown", function (event) {
       if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
         sendQuestion();
       }
     });
-
     clearButton.addEventListener("click", function () {
       resetChat();
     });
-
+		
+		showMatchesButton.addEventListener("click", function () {
+  console.log("Show matches clicked. Count:", lastMatches.length);
+  openMatchesModal();
+});
+closeMatchesButton.addEventListener("click", function () {
+  closeMatchesModal();
+});
+matchesModal.addEventListener("click", function (event) {
+  if (event.target.classList.contains("modal-backdrop")) {
+    closeMatchesModal();
+  }
+});
+document.addEventListener("keydown", function (event) {
+  if (event.key === "Escape" && matchesModal.classList.contains("open")) {
+    closeMatchesModal();
+  }
+});
     resetChat();
   </script>
 </body>
